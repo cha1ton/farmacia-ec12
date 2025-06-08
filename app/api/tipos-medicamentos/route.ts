@@ -15,4 +15,3 @@ export async function POST({ request }: { request: Request }) {
   const nuevoTipo = await prisma.tipoMedic.create({ data });
   return NextResponse.json(nuevoTipo);
 }
-git add .
