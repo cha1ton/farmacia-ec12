@@ -1,0 +1,89 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Laboratorio {
+  CodLab        Int           @id @default(autoincrement())
+  razonSocial   String
+  direccion     String
+  telefono      String
+  email         String
+  contacto      String
+  ordenesCompra OrdenCompra[]
+}
+
+model TipoMedic {
+  CodTipoMed   Int           @id @default(autoincrement())
+  descripcion  String
+  medicamentos Medicamento[]
+}
+
+model Especialidad {
+  CodEspec       Int           @id @default(autoincrement())
+  descripcionEsp String
+  medicamentos   Medicamento[]
+}
+
+model Medicamento {
+  CodMedicamento     Int                  @id @default(autoincrement())
+  descripcionMed     String
+  fechaFabricacion   DateTime
+  fechaVencimiento   DateTime
+  presentacion       String
+  stock              Int
+  precioVentaUni     Float
+  precioVentaPres    Float
+  Marca              String
+  CodTipoMed         Int
+  CodEspec           Int
+  detalleOrdenCompra DetalleOrdenCompra[]
+  detalleOrdenVta    DetalleOrdenVta[]
+  especialidad       Especialidad         @relation(fields: [CodEspec], references: [CodEspec])
+  tipoMedic          TipoMedic            @relation(fields: [CodTipoMed], references: [CodTipoMed])
+}
+
+model OrdenVenta {
+  NroOrdenVta  Int               @id @default(autoincrement())
+  fechaEmision DateTime
+  Motivo       String
+  Situacion    String
+  detalles     DetalleOrdenVta[]
+}
+
+model DetalleOrdenVta {
+  id                Int         @id @default(autoincrement())
+  NroOrdenVta       Int
+  CodMedicamento    Int
+  descripcionMed    String
+  cantidadRequerida Int
+  medicamento       Medicamento @relation(fields: [CodMedicamento], references: [CodMedicamento])
+  ordenVenta        OrdenVenta  @relation(fields: [NroOrdenVta], references: [NroOrdenVta])
+}
+
+model OrdenCompra {
+  NroOrdenC      Int                  @id @default(autoincrement())
+  fechaEmision   DateTime
+  Situacion      String
+  Total          Float
+  NroFacturaProv String
+  CodLab         Int
+  detalles       DetalleOrdenCompra[]
+  laboratorio    Laboratorio          @relation(fields: [CodLab], references: [CodLab])
+}
+
+model DetalleOrdenCompra {
+  id             Int         @id @default(autoincrement())
+  NroOrdenC      Int
+  CodMedicamento Int
+  descripcion    String
+  cantidad       Int
+  precio         Float
+  montouni       Float
+  medicamento    Medicamento @relation(fields: [CodMedicamento], references: [CodMedicamento])
+  ordenCompra    OrdenCompra @relation(fields: [NroOrdenC], references: [NroOrdenC])
+}
