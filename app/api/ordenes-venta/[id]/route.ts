@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 const prisma = new PrismaClient();
 
 // GET: Obtener una orden por ID
-export async function GET({ params }: { params: { id: string } }) {
+export async function GET(req: Request, { params }: { params: { id: string } }) {
   const id = parseInt(params.id);
   if (isNaN(id)) {
     return NextResponse.json({ error: "ID inválido" }, { status: 400 });
@@ -29,7 +29,7 @@ export async function GET({ params }: { params: { id: string } }) {
 }
 
 // DELETE: Eliminar una orden
-export async function DELETE({ params }: { params: { id: string } }) {
+export async function DELETE(req: Request, { params }: { params: { id: string } }) {
   const id = parseInt(params.id);
   if (isNaN(id)) {
     return NextResponse.json({ error: "ID inválido" }, { status: 400 });
@@ -42,15 +42,9 @@ export async function DELETE({ params }: { params: { id: string } }) {
 }
 
 // PUT: Editar una orden
-export async function PUT({
-  request,
-  params,
-}: {
-  request: Request;
-  params: { id: string };
-}) {
+export async function PUT(req: Request, { params }: { params: { id: string } }) {
   const id = parseInt(params.id);
-  const data = await request.json();
+  const data = await req.json();
 
   await prisma.detalleOrdenVta.deleteMany({ where: { NroOrdenVta: id } });
 
