@@ -1,24 +1,30 @@
-import { PrismaClient } from '@prisma/client'
-import { NextResponse } from 'next/server'
+import { PrismaClient } from '@prisma/client';
+import { NextResponse } from 'next/server';
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
-export async function GET(_: Request, { params }: { params: { id: string } }) {
+export async function GET({ params }: { params: { id: string } }) {
   const orden = await prisma.ordenCompra.findUnique({
     where: { NroOrdenC: Number(params.id) },
     include: { laboratorio: true }
-  })
+  });
 
   if (!orden) {
-    return NextResponse.json({ error: 'Orden no encontrada' }, { status: 404 })
+    return NextResponse.json({ error: 'Orden no encontrada' }, { status: 404 });
   }
 
-  return NextResponse.json(orden)
+  return NextResponse.json(orden);
 }
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
-  const id = Number(params.id)
-  const data = await req.json()
+export async function PUT({
+  request,
+  params
+}: {
+  request: Request;
+  params: { id: string };
+}) {
+  const id = Number(params.id);
+  const data = await request.json();
 
   const updated = await prisma.ordenCompra.update({
     where: { NroOrdenC: id },
@@ -29,15 +35,15 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
       NroFacturaProv: data.NroFacturaProv,
       CodLab: parseInt(data.CodLab)
     }
-  })
+  });
 
-  return NextResponse.json(updated)
+  return NextResponse.json(updated);
 }
 
-export async function DELETE(_: Request, { params }: { params: { id: string } }) {
-  const id = Number(params.id)
+export async function DELETE({ params }: { params: { id: string } }) {
+  const id = Number(params.id);
 
-  await prisma.ordenCompra.delete({ where: { NroOrdenC: id } })
+  await prisma.ordenCompra.delete({ where: { NroOrdenC: id } });
 
-  return NextResponse.json({ message: 'Orden eliminada' })
+  return NextResponse.json({ message: 'Orden eliminada' });
 }

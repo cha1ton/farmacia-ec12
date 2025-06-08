@@ -4,8 +4,8 @@ import { NextResponse } from "next/server";
 const prisma = new PrismaClient();
 
 // GET: Obtener una orden por ID
-export async function GET(req: Request, context: { params: { id: string } }) {
-  const id = parseInt(context.params.id);
+export async function GET({ params }: { params: { id: string } }) {
+  const id = parseInt(params.id);
   if (isNaN(id)) {
     return NextResponse.json({ error: "ID inválido" }, { status: 400 });
   }
@@ -29,8 +29,8 @@ export async function GET(req: Request, context: { params: { id: string } }) {
 }
 
 // DELETE: Eliminar una orden
-export async function DELETE(req: Request, context: { params: { id: string } }) {
-  const id = parseInt(context.params.id);
+export async function DELETE({ params }: { params: { id: string } }) {
+  const id = parseInt(params.id);
   if (isNaN(id)) {
     return NextResponse.json({ error: "ID inválido" }, { status: 400 });
   }
@@ -42,9 +42,15 @@ export async function DELETE(req: Request, context: { params: { id: string } }) 
 }
 
 // PUT: Editar una orden
-export async function PUT(req: Request, context: { params: { id: string } }) {
-  const id = parseInt(context.params.id);
-  const data = await req.json();
+export async function PUT({
+  request,
+  params,
+}: {
+  request: Request;
+  params: { id: string };
+}) {
+  const id = parseInt(params.id);
+  const data = await request.json();
 
   await prisma.detalleOrdenVta.deleteMany({ where: { NroOrdenVta: id } });
 

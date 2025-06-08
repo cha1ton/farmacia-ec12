@@ -1,23 +1,23 @@
-import { PrismaClient } from '@prisma/client'
-import { NextResponse } from 'next/server'
+import { PrismaClient } from "@prisma/client";
+import { NextResponse } from "next/server";
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 export async function GET() {
   const ordenes = await prisma.ordenVenta.findMany({
     include: {
       detalles: {
         include: {
-          medicamento: true
-        }
-      }
-    }
-  })
-  return NextResponse.json(ordenes)
+          medicamento: true,
+        },
+      },
+    },
+  });
+  return NextResponse.json(ordenes);
 }
 
-export async function POST(req: Request) {
-  const data = await req.json()
+export async function POST({ request }: { request: Request }) {
+  const data = await request.json();
 
   const nuevaOrden = await prisma.ordenVenta.create({
     data: {
@@ -28,14 +28,14 @@ export async function POST(req: Request) {
         create: data.detalles.map((detalle: any) => ({
           CodMedicamento: detalle.CodMedicamento,
           descripcionMed: detalle.descripcionMed,
-          cantidadRequerida: detalle.cantidadRequerida
-        }))
-      }
+          cantidadRequerida: detalle.cantidadRequerida,
+        })),
+      },
     },
     include: {
-      detalles: true
-    }
-  })
+      detalles: true,
+    },
+  });
 
-  return NextResponse.json(nuevaOrden)
+  return NextResponse.json(nuevaOrden);
 }

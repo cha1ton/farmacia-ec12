@@ -13,10 +13,8 @@ export async function GET() {
   return NextResponse.json(meds)
 }
 
-export async function POST(req: Request) {
-  const data = await req.json()
-  const newMed = await prisma.medicamento.create({
-    data,
-  })
-  return NextResponse.json(newMed)
+export async function POST({ request }: { request: Request }) {
+  const data = await request.json();
+  const newMed = await prisma.medicamento.create({ data });
+  return NextResponse.json(newMed);
 }
